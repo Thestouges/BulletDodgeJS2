@@ -12,7 +12,8 @@ var bulletsize = 5;
 var keyStack;
 var mousePos;
 
-var timerInterval = [];
+var enemies = [];
+var enemySpawnDistance;
 
 function initialize(){
     initializeGame();
@@ -34,6 +35,7 @@ function initializeGame(){
     initializePlayer();
 
     enemySpawnDistance = Math.max(canvas.height, canvas.width);
+    spawnEnemy();
 }
 
 function setEventListeners(){
@@ -111,7 +113,7 @@ function updatePlayer(e){
 }
 
 function initializePlayer(){
-    player = new Player(new Victor(0,0),playerSpeed,0);
+    player = new Player(new Victor(0,0),playerSpeed,0, playersize);
 }
 
 function drawPlayer(){
@@ -121,7 +123,7 @@ function drawPlayer(){
     context.translate(player.position.x,player.position.y);
     context.rotate(player.rotation);
     context.translate(-player.position.x,-player.position.y);
-    context.rect(player.position.x-playersize/2,player.position.y-playersize/2,playersize,playersize);
+    context.rect(player.position.x-player.size/2,player.position.y-player.size/2,player.size,player.size);
     context.stroke();
     context.restore();
 
@@ -139,6 +141,10 @@ function redraw(){
     drawArena();
     drawPlayer();
     DrawUpdateBullets();
+
+    drawEnemies();
+    updateEnemyPos();
+
 }
 
 function movePlayer(){
@@ -215,17 +221,37 @@ function CheckIntersection(object1Size, object1Pos, object2Size, object2Pos){
 }
 
 function checkPlayerPositionInArena(){
-    var radius = arenaSize - playersize/2;
-    var centerPosition = new Victor(0, 0); 
-    var newLocation = new Victor(player.position.x,player.position.y);
-    var distance = newLocation.distance(centerPosition);
+    player.checkPlayerPositionInArena(arenaSize);
+}
+
+function spawnEnemy(){
+    var posx = Math.random()*2 - 1;
+    var posy = Math.random()*2 - 1;
     
-    if (distance > radius)
-    {
-        var fromOriginToObject = newLocation.subtract(centerPosition);
-        fromOriginToObject.x *= (radius / distance);
-        fromOriginToObject.y *= (radius / distance);
-        newLocation = centerPosition.add(fromOriginToObject);
-        player.updatePlayerPos(newLocation);
-    }
+    var normVec = new Victor(posx, posy);
+    normVec.normalize();
+
+    normVec.multiply(Victor(enemySpawnDistance, enemySpawnDistance))
+
+    enemies.push(new enemyLineShot(normVec,playerSpeed,playersize));
+}
+
+function drawEnemies(){
+    enemies.forEach(element => {
+        context.beginPath();
+        context.arc(element.position.x,element.position.y,playersize/2,0,2*Math.PI);
+        context.stroke();
+        
+        context.beginPath();
+        context.moveTo(element.position.x, element.position.y);
+        context.lineTo(player.position.x,player.position.y);
+        context.stroke();
+        
+    });
+}
+
+function updateEnemyPos(){
+    enemies.forEach(element => {
+        element.checkEnemyPositionHitArena(arenaSize);
+    });
 }
