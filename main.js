@@ -14,6 +14,7 @@ var mousePos;
 
 var enemies = [];
 var enemySpawnDistance;
+var enemyBulletList = [];
 
 function initialize(){
     initializeGame();
@@ -144,7 +145,7 @@ function redraw(){
 
     drawEnemies();
     updateEnemyPos();
-
+    drawEnemyBullets();
 }
 
 function movePlayer(){
@@ -207,7 +208,7 @@ function DrawUpdateBullets(){
 }
 
 function CheckIntersection(object1Size, object1Pos, object2Size, object2Pos){
-    var radius = object2Size/2 + object1Size/2;
+    var radius = object2Size + object1Size;
     var centerPosition = new Victor(object1Pos.x, object1Pos.y); 
     var newLocation = new Victor(object2Pos.x,object2Pos.y);
     var distance = newLocation.distance(centerPosition);
@@ -233,7 +234,7 @@ function spawnEnemy(){
 
     normVec.multiply(Victor(enemySpawnDistance, enemySpawnDistance))
 
-    enemies.push(new enemyLineShot(normVec,playerSpeed,playersize));
+    enemies.push(new enemy(normVec,playerSpeed,playersize));
 }
 
 function drawEnemies(){
@@ -250,8 +251,34 @@ function drawEnemies(){
     });
 }
 
-function updateEnemyPos(){
-    enemies.forEach(element => {
-        element.checkEnemyPositionHitArena(arenaSize);
+function drawEnemyBullets(){
+    enemyBulletList.forEach(bulletSet =>{
+        bulletSet.forEach(element => {
+            context.beginPath();
+            context.arc(element.position.x,element.position.y,bulletsize,0,2*Math.PI);
+            context.stroke();
+
+            element.updatePosition();
+        });
     });
+}
+
+function updateEnemyPos(){
+    for(var i = 0; i < enemies.length; i++){
+        if(CheckIntersection(arenaSize, Victor(0,0), enemies[i].size/2, enemies[i].position)){
+            spawnEnemyShots(enemies[i].position, player.position);
+            enemies.splice(i,1);
+            i--;
+        }
+        else{
+            enemies[i].updatePosition(Victor(0,0));
+        }
+    }
+}
+
+function spawnEnemyShots(position, target){
+    var bulletspawn = new lineshot(position, target);
+    enemyBulletList.push(bulletspawn.bullets);
+
+    console.log(bulletspawn.bullets);
 }
