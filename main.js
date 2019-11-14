@@ -277,7 +277,7 @@ function updateEnemyPos(){
 }
 
 function spawnEnemyShots(position, target){
-    var bulletspawn = new lineshot(position, target);
+    var bulletspawn = new bombshot(position, target);
     enemyBulletList.push(bulletspawn.bullets);
 
     console.log(bulletspawn.bullets);
