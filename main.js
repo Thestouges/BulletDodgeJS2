@@ -36,7 +36,7 @@ function initializeGame(){
     initializePlayer();
 
     enemySpawnDistance = Math.max(canvas.height, canvas.width);
-    spawnEnemy();
+    //spawnEnemy();
 }
 
 function setEventListeners(){
@@ -49,6 +49,7 @@ function setEventListeners(){
 
 function setTimerInvervals(){
     setInterval(redraw, 10);
+    setInterval(spawnEnemy,1000);
 }
 
 function SetMovementKeys(){
@@ -277,8 +278,30 @@ function updateEnemyPos(){
 }
 
 function spawnEnemyShots(position, target){
-    var bulletspawn = new bombshot(position, target);
-    enemyBulletList.push(bulletspawn.bullets);
+    var num = Math.floor(Math.random() * 2);
 
-    console.log(bulletspawn.bullets);
+    if(num == 0){
+        var bulletspawn = new bombshot(position, target);
+        enemyBulletList.push(bulletspawn.bullets);
+    }
+    else if(num == 1){
+        var bulletspawn = new lineshot(position, target);
+        enemyBulletList.push(bulletspawn.bullets);
+    }
+}
+
+function DestroyBullets(){
+    for(var i = 0; i < enemyBulletList.length; i++){
+        for(var j = 0; j < enemyBulletList[i].length; j++){
+            if(enemyBulletList[i].position.x < -canvas.width/2 || enemyBulletList[i].position.y < -canvas.height/2
+                || enemyBulletList[i].position.x > canvas.width/2 || enemyBulletList[i].position.y > canvas.height/2){
+                    enemyBulletList[i].splice(j,1);
+                    j--;
+            }
+        }
+        if(enemyBulletList[i].length == 0){
+            enemyBulletList.splice(i,1);
+            i--;
+        }
+    }
 }
