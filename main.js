@@ -44,7 +44,7 @@ function setEventListeners(){
     canvas.addEventListener('mousemove', updatePlayer);
     window.addEventListener("keydown", keyboardDownEvent);
     window.addEventListener("keyup", keyboardUpEvent);
-    canvas.addEventListener('click', FireBullet, false);
+    //canvas.addEventListener('click', FireBullet, false);
 }
 
 function setTimerInvervals(){
@@ -280,14 +280,27 @@ function updateEnemyPos(){
 function spawnEnemyShots(position, target){
     var num = Math.floor(Math.random() * 2);
 
-    if(num == 0){
+    if(num == 0){ //enemy bomb shot
         var bulletspawn = new bombshot(position, target);
         enemyBulletList.push(bulletspawn.bullets);
     }
-    else if(num == 1){
-        var bulletspawn = new lineshot(position, target);
-        enemyBulletList.push(bulletspawn.bullets);
+    else if(num == 1){ //enemy line shot
+        var tempTarget = new Victor(target.x, target.y);
+        for(var i = 0; i < 5; i++){
+            spawnEnemyBullets(i,position,tempTarget); //i value gets read last in settimeout
+        }
     }
+}
+
+function spawnEnemyBullets(ivalue,position, target){
+    setTimeout(() => {
+        var enemybullet = [];
+
+        var bullet = new Bullet(position, 1, Victor(-(position.x - target.x), -(position.y - target.y)), bulletsize);
+
+        enemybullet.push(bullet);
+        enemyBulletList.push(enemybullet);
+    }, ivalue*150);
 }
 
 function DestroyBullets(){
