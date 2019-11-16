@@ -10,6 +10,6 @@ class enemy{
         vecdir.subtract(targetpos).normalize();
         vecdir.multiply(Victor(this.speed, this.speed));
         this.position = this.position.subtract(vecdir);
-        console.log(this.position);
+        //console.log(this.position);
     }
 }

@@ -13,6 +13,6 @@ class bombshot extends enemyshot{
     initializebullets(angle){
         var bullet = new Bullet(this.position,this.bulletspeed,Victor(1,0).rotateDeg(angle),this.bulletsize);
         this.bullets.push(bullet);
-        console.log(Victor(0,0).rotateDeg(angle));
+        //console.log(Victor(0,0).rotateDeg(angle));
     }
 }

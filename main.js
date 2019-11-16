@@ -147,6 +147,7 @@ function redraw(){
     drawEnemies();
     updateEnemyPos();
     drawEnemyBullets();
+    DestroyBullets();
 }
 
 function movePlayer(){
@@ -262,6 +263,8 @@ function drawEnemyBullets(){
             element.updatePosition();
         });
     });
+
+    //console.log(enemyBulletList.length);
 }
 
 function updateEnemyPos(){
@@ -306,8 +309,8 @@ function spawnEnemyBullets(ivalue,position, target){
 function DestroyBullets(){
     for(var i = 0; i < enemyBulletList.length; i++){
         for(var j = 0; j < enemyBulletList[i].length; j++){
-            if(enemyBulletList[i].position.x < -canvas.width/2 || enemyBulletList[i].position.y < -canvas.height/2
-                || enemyBulletList[i].position.x > canvas.width/2 || enemyBulletList[i].position.y > canvas.height/2){
+            if(enemyBulletList[i][j].position.x < -canvas.width/2 || enemyBulletList[i][j].position.y < -canvas.height/2
+                || enemyBulletList[i][j].position.x > canvas.width/2 || enemyBulletList[i][j].position.y > canvas.height/2){
                     enemyBulletList[i].splice(j,1);
                     j--;
             }
@@ -317,4 +320,6 @@ function DestroyBullets(){
             i--;
         }
     }
+
+    console.log(enemyBulletList.length);
 }
